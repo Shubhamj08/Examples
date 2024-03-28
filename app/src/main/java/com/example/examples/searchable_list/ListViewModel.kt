@@ -1,5 +1,6 @@
 package com.example.examples.searchable_list
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -22,7 +23,7 @@ class ListViewModel: ViewModel() {
         Item("Yoga"),
     )
 
-    private var _filteredItems: List<Item> = items
+    private var _filteredItems: List<Item> by mutableStateOf(items)
     val filteredItems: List<Item>
         get() = _filteredItems
 
