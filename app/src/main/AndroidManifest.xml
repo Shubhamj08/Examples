@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -15,9 +15,9 @@
         android:theme="@style/Theme.Examples"
         tools:targetApi="31">
         <activity
-            android:name=".retrofit.CommentsActivity"
+            android:name=".persistence.PersistenceActivity"
             android:exported="true"
-            android:label="@string/app_name"
+            android:label="@string/title_activity_persistence"
             android:theme="@style/Theme.Examples">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,15 +26,28 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".searchable_list.SearchableListActivity"
+            android:name=".retrofit.CommentsActivity"
             android:exported="true"
-            android:label="@string/app_name"
+            android:label="@string/title_activity_retrofit"
             android:theme="@style/Theme.Examples">
 <!--            <intent-filter>-->
 <!--                <action android:name="android.intent.action.MAIN" />-->
 
 <!--                <category android:name="android.intent.category.LAUNCHER" />-->
 <!--            </intent-filter>-->
+        </activity>
+        <activity
+            android:name=".searchable_list.SearchableListActivity"
+            android:exported="true"
+            android:label="@string/title_activity_searchable_list"
+            android:theme="@style/Theme.Examples">
+
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
     </application>
 
