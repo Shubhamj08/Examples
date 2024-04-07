@@ -1,11 +1,9 @@
 package com.example.examples.persistence
 
-import android.graphics.drawable.Icon
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,8 +20,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -34,26 +30,38 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SegmentedButtonDefaults.Icon
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import com.example.examples.MyApplication
 import com.example.examples.ui.theme.ExamplesTheme
 import com.example.examples.ui.theme.Red
 import com.example.examples.ui.theme.Yellow
 
 class PersistenceActivity : ComponentActivity() {
+
+    private lateinit var persistenceViewModel: PersistenceViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val taskRepository = (applicationContext as MyApplication).repository
+        persistenceViewModel = ViewModelProvider(this, object: ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return PersistenceViewModel(taskRepository = taskRepository) as T
+            }
+        }).get(PersistenceViewModel::class.java)
+
+
         setContent {
             ExamplesTheme {
                 // A surface container using the 'background' color from the theme
@@ -61,7 +69,7 @@ class PersistenceActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    TodoPreview()
+                    Todo(persistenceViewModel = persistenceViewModel)
                 }
             }
         }
@@ -136,7 +144,7 @@ fun TaskField(
                 .wrapContentSize(),
             shape = RoundedCornerShape(8.dp),
             onClick = {
-
+                persistenceViewModel.handleSaveTask()
             }
         ) {
             Text(
@@ -221,7 +229,7 @@ fun TaskCard(
 
                 IconButton(
                     modifier = Modifier.size(24.dp),
-                    onClick = { /*TODO*/ }
+                    onClick = { persistenceViewModel.handleDeleteTask(task) }
                 ) {
                     Icon(
                         Icons.Default.Delete,
@@ -238,10 +246,11 @@ fun TaskCard(
 fun TaskList(
     persistenceViewModel: PersistenceViewModel
 ) {
+    val tasks = persistenceViewModel.tasksState.collectAsState()
     LazyColumn(
         modifier = Modifier.fillMaxSize()
     ) {
-        items(persistenceViewModel.tasks) { task ->
+        items(tasks.value) { task ->
             TaskCard(persistenceViewModel = persistenceViewModel, task = task)
         }
     }
@@ -249,7 +258,7 @@ fun TaskList(
 
 @Composable
 fun Todo(
-    persistenceViewModel: PersistenceViewModel = viewModel()
+    persistenceViewModel: PersistenceViewModel
 ) {
     Column(
         modifier = Modifier.padding(24.dp),
@@ -263,10 +272,4 @@ fun Todo(
 
         TaskList(persistenceViewModel)
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun TodoPreview() {
-    Todo()
 }
