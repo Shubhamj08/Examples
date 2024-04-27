@@ -3,6 +3,7 @@ package com.example.examples.searchable_list
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,22 +21,22 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.examples.ui.theme.ExamplesTheme
-import androidx.lifecycle.viewmodel.compose.viewModel
-
 class SearchableListActivity : ComponentActivity() {
+
+    private val listViewModel: ListViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContent {
             ExamplesTheme {
-                // A surface container using the 'background' color from the theme
+
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    SearchableList()
+                    SearchableList(listViewModel)
                 }
             }
         }
@@ -67,7 +68,7 @@ fun ListItem(item: Item){
 
 @Composable
 fun SearchableList(
-    listViewModel: ListViewModel = viewModel()
+    listViewModel: ListViewModel
 ) {
 
     Column {
@@ -88,11 +89,4 @@ fun SearchableList(
             }
         }
     }
-}
-
-
-@Preview
-@Composable
-fun PreviewSearchableList(){
-    SearchableList()
 }

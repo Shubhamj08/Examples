@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:name=".MyApplication"
@@ -16,9 +18,14 @@
         android:theme="@style/Theme.Examples"
         tools:targetApi="31">
         <activity
-            android:name=".persistence.PersistenceActivity"
+            android:name=".notification.NotificationActivity"
+            android:exported="false"
+            android:label="@string/title_activity_notification"
+            android:theme="@style/Theme.Examples" />
+        <activity
+            android:name=".base.MainActivity"
             android:exported="true"
-            android:label="@string/title_activity_persistence"
+            android:label="@string/title_activity_main"
             android:theme="@style/Theme.Examples">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,15 +34,30 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".persistence.PersistenceActivity"
+            android:exported="true"
+            android:label="@string/title_activity_persistence"
+            android:theme="@style/Theme.Examples">
+
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
+        </activity>
+        <activity
             android:name=".retrofit.CommentsActivity"
             android:exported="true"
             android:label="@string/title_activity_retrofit"
             android:theme="@style/Theme.Examples">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
 
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
         <activity
             android:name=".searchable_list.SearchableListActivity"
@@ -50,6 +72,13 @@
             <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
             <!-- </intent-filter> -->
         </activity>
+        <receiver android:name=".notification.NotificationBroadcastReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="@string/foreground_notification_click_action" />
+            </intent-filter>
+        </receiver>
+        <service android:name=".notification.SendNotificationService" />
     </application>
 
 </manifest>

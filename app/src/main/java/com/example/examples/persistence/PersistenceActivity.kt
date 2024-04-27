@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,8 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
@@ -38,33 +41,29 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import com.example.examples.MyApplication
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.examples.ui.theme.ExamplesTheme
 import com.example.examples.ui.theme.Red
 import com.example.examples.ui.theme.Yellow
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class PersistenceActivity : ComponentActivity() {
 
     private lateinit var persistenceViewModel: PersistenceViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val taskRepository = (applicationContext as MyApplication).repository
-        persistenceViewModel = ViewModelProvider(this, object: ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return PersistenceViewModel(taskRepository = taskRepository) as T
-            }
-        }).get(PersistenceViewModel::class.java)
-
-
         setContent {
             ExamplesTheme {
-                // A surface container using the 'background' color from the theme
+
+                persistenceViewModel = hiltViewModel()
+
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -83,9 +82,15 @@ fun TaskField(
 ) {
 
     val selectedPriority = persistenceViewModel.priority
+    val focusManager = LocalFocusManager.current
 
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth()
+            .pointerInput(Unit){
+                detectTapGestures(onTap = {
+                    focusManager.clearFocus()
+                })
+            },
         horizontalAlignment = Alignment.End,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -105,7 +110,9 @@ fun TaskField(
                 )
             },
             minLines = 3,
-            maxLines = 5
+            maxLines = 5,
+            keyboardOptions = KeyboardOptions.Default.copy(),
+            keyboardActions = KeyboardActions.Default
         )
 
         Row(
@@ -144,6 +151,7 @@ fun TaskField(
                 .wrapContentSize(),
             shape = RoundedCornerShape(8.dp),
             onClick = {
+                focusManager.clearFocus()
                 persistenceViewModel.handleSaveTask()
             }
         ) {

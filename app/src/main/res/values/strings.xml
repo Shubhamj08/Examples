@@ -3,4 +3,8 @@
     <string name="title_activity_searchable_list">SearchableListActivity</string>
     <string name="title_activity_retrofit">CommentsActivity</string>
     <string name="title_activity_persistence">PersistenceActivity</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_notification">NotificationActivity</string>
+
+    <string name="foreground_notification_click_action">com.example.OPEN_PERSISTENCE_ACTIVITY</string>
 </resources>

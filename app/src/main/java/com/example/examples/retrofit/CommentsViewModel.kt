@@ -1,19 +1,21 @@
 package com.example.examples.retrofit
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.Lazy
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class CommentsViewModel: ViewModel() {
-
-    private val TAG = "Comments Viewmodel"
+@HiltViewModel
+class CommentsViewModel @Inject constructor(
+    private val commentsRepository: Lazy<CommentsRepository>
+): ViewModel() {
 
     private var _comments: List<Comment> by mutableStateOf(listOf())
     val comments: List<Comment>
@@ -25,15 +27,11 @@ class CommentsViewModel: ViewModel() {
 //    }
 
     fun getCommentsFromBackend() {
-        val commentsApi = RetrofitHelper.getInstance().create(CommentsApi::class.java)
         viewModelScope.launch(Dispatchers.IO) {
-            val response = commentsApi.getComments()
+            val comments = commentsRepository.get().getComments()
 
             withContext(Dispatchers.Main) {
-                if (response.isSuccessful && !response.body().isNullOrEmpty()) {
-                    _comments = response.body()!!
-                    Log.d(TAG, comments.size.toString())
-                }
+                    _comments = comments
             }
         }
     }
